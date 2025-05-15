@@ -1,0 +1,31 @@
+{
+  "name": "phoenixd-mcp-server",
+  "version": "1.0.0",
+  "description": "Connect a phoenixd bitcoin lightning wallet to your LLM.",
+  "keywords": [
+    "phoenixd",
+    "mcp"
+  ],
+  "homepage": "https://github.com/Sharmaz/phoenixd-mcp-server#readme",
+  "bugs": {
+    "url": "https://github.com/Sharmaz/phoenixd-mcp-server/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sharmaz/phoenixd-mcp-server.git"
+  },
+  "license": "MIT",
+  "author": "Ivan Robles <irae45@gmail.com>",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.11.2",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.18"
+  }
+}
