@@ -7,11 +7,10 @@ Connect a phoenixd bitcoin lightning wallet to your LLM.
 Add this to your `claude_desktop_config.json` file:
 ```json
 "phoenixd-mpc-server": {
-  "command": "/Users/sharmaz/.asdf/shims/npx",
+  "command": "npx",
   "args": [
     "-y",
-    "tsx",
-    "/Users/sharmaz/Dev/phoenixd-mcp-server/src/index.ts"
+    "phoenixd-mcp-server"
   ],
   "env": {
     "HTTP_HOST": "http://<your_host>",

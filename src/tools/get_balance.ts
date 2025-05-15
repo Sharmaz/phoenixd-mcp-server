@@ -4,7 +4,7 @@ import { PhoenixdMcpConfig } from '../types';
 
 export function registerGetBalanceTool(
   server: McpServer,
-  config: PhoenixdMcpConfig
+  config: PhoenixdMcpConfig,
 ) {
   server.tool(
     'get-balance',
@@ -29,20 +29,20 @@ export function registerGetBalanceTool(
           content: [
             {
               type: 'text',
-              text: `Balance not found`
-            }
-          ]
-        }
+              text: 'Balance not found',
+            },
+          ],
+        };
       }
   
       return {
         content: [
           {
             type: 'text',
-            text: JSON.stringify(balanceData, null, 2)
-          }
-        ]
-      }
-    }
+            text: JSON.stringify(balanceData, null, 2),
+          },
+        ],
+      };
+    },
   );
 }

@@ -8,7 +8,7 @@ import { registerGetBalanceTool } from './tools/get_balance.js';
 const config = {
   httpPassword: process.env.HTTP_PASSWORD || '',
   httpPort: process.env.HTTP_PORT || '',
-  httpHost: process.env.HTTP_HOST || ''
+  httpHost: process.env.HTTP_HOST || '',
 };
 
 if (!process.env.HTTP_PASSWORD || !process.env.HTTP_PORT || !process.env.HTTP_HOST) {
