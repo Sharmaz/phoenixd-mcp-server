@@ -1,20 +1,16 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { z } from 'zod';
 import { PhoenixdMcpConfig } from '../types';
 
-export function registerGetBalanceTool(
+export function registerListChannelsTool(
   server: McpServer,
   config: PhoenixdMcpConfig,
 ) {
   server.tool(
-    'get-balance',
-    'Get the balance of the wallet using phoenixd API',
-    {
-      balance: z.string().describe('Get phoenixd balance'),
-    },
+    'list-channels',
+    'List the node channels using phoenixd API',
     async () => {
       const credentials = btoa(`:${config.httpPassword}`);
-      const data = await fetch(`${config.httpHost}:${config.httpPort}/getbalance`, {
+      const data = await fetch(`${config.httpHost}:${config.httpPort}/listchannels`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -22,14 +18,14 @@ export function registerGetBalanceTool(
         },
       });
 
-      const balanceData = await data.json();
+      const channelsListData = await data.json();
 
-      if (balanceData.length === 0) {
+      if (channelsListData.length === 0) {
         return {
           content: [
             {
               type: 'text',
-              text: 'Balance not found',
+              text: 'Channels not found',
             },
           ],
         };
@@ -39,7 +35,7 @@ export function registerGetBalanceTool(
         content: [
           {
             type: 'text',
-            text: JSON.stringify(balanceData, null, 2),
+            text: JSON.stringify(channelsListData, null, 2),
           },
         ],
       };
