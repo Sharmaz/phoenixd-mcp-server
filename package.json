@@ -27,7 +27,7 @@
     "build"
   ],
   "bin": {
-    "phoenixd-mcp-server": "./bin/index.js"
+    "phoenixd-mcp-server": "./build/index.js"
   },
   "scripts": {
     "prepack": "npm run build",
