@@ -4,11 +4,13 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 
 import { registerGetBalanceTool } from './tools/get_balance.js';
+import { registerGetNodeInfoTool } from './tools/get_node_info.js';
+import { registerListChannelsTool } from './tools/list_channels.js';
 
 const config = {
   httpPassword: process.env.HTTP_PASSWORD || '',
   httpPort: process.env.HTTP_PORT || '',
-  httpHost: process.env.HTTP_HOST || ''
+  httpHost: process.env.HTTP_HOST || '',
 };
 
 if (!process.env.HTTP_PASSWORD || !process.env.HTTP_PORT || !process.env.HTTP_HOST) {
@@ -18,10 +20,12 @@ if (!process.env.HTTP_PASSWORD || !process.env.HTTP_PORT || !process.env.HTTP_HO
 
 const server = new McpServer({
   name: 'phoenixd-mcp-server',
-  version: '0.1.0',
+  version: '0.1.1',
 });
 
 await registerGetBalanceTool(server, config);
+await registerGetNodeInfoTool(server, config);
+await registerListChannelsTool(server, config);
 
 const transport = new StdioServerTransport();
 await server.connect(transport);
