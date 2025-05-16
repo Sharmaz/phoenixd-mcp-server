@@ -8,10 +8,10 @@ export function registerCloseChannelTool(
 ) {
   server.tool(
     'close-channel',
-    'Close a channel using phoenixd API',
+    'Close a channel by ID, sending the funds to a specified address on chain, with a specified fee rate',
     {
       channelId: z.string().describe('The ID of the channel to close'),
-      address: z.string().describe('The address to send the funds to'),
+      address: z.string().describe('The Bitcoin on chain address to send the funds to'),
       feerateSatByte: z.number().describe('The fee rate in satoshis per byte'),
     },
     async ({ channelId, address, feerateSatByte }) => {

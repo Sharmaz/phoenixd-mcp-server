@@ -8,9 +8,9 @@ export function registerDecodeInvoiceTool(
 ) {
   server.tool(
     'decode-invoice',
-    'Decode an invoice using phoenixd API',
+    'Decode an bolt11 invoice, the output amount is in milisatoshis',
     {
-      invoice: z.string().describe('The invoice to decode'),
+      invoice: z.string().describe('The bolt11 invoice to decode'),
     },
     async ({ invoice }) => {
       const credentials = btoa(`:${config.httpPassword}`);

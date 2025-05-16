@@ -7,7 +7,7 @@ export function registerListChannelsTool(
 ) {
   server.tool(
     'list-channels',
-    'List the node channels using phoenixd API',
+    'List the node channels',
     async () => {
       const credentials = btoa(`:${config.httpPassword}`);
       const data = await fetch(`${config.httpHost}:${config.httpPort}/listchannels`, {

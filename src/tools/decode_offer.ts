@@ -8,9 +8,9 @@ export function registerDecodeOfferTool(
 ) {
   server.tool(
     'decode-offer',
-    'Decode an offer using phoenixd API',
+    'Decode an bolt12 offer the output amount is in milisatoshis',
     {
-      offer: z.string().describe('The offer to decode'),
+      offer: z.string().describe('The bolt12 offer to decode'),
     },
     async ({ offer }) => {
       const credentials = btoa(`:${config.httpPassword}`);
