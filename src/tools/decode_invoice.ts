@@ -1,0 +1,53 @@
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { z } from 'zod';
+import { PhoenixdMcpConfig } from '../types';
+
+export function registerDecodeInvoiceTool(
+  server: McpServer,
+  config: PhoenixdMcpConfig,
+) {
+  server.tool(
+    'decode-invoice',
+    'Decode an invoice using phoenixd API',
+    {
+      invoice: z.string().describe('The invoice to decode'),
+    },
+    async ({ invoice }) => {
+      const credentials = btoa(`:${config.httpPassword}`);
+      const params = new URLSearchParams({
+        invoice,
+      });
+
+      const data = await fetch(`${config.httpHost}:${config.httpPort}/decodeinvoice`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': `Basic ${credentials}`,
+        },
+        body: params.toString(),
+      });
+
+      const decodedInvoiceData = await data.json();
+
+      if (decodedInvoiceData.length === 0) {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: 'Invoice not found',
+            },
+          ],
+        };
+      }
+
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(decodedInvoiceData, null, 2),
+          },
+        ],
+      };
+    },
+  );
+}
