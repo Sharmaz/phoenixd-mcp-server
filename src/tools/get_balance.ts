@@ -7,7 +7,7 @@ export function registerGetBalanceTool(
 ) {
   server.tool(
     'get-balance',
-    'Get the balance of the wallet using phoenixd API',
+    'Get the balance of the node',
     async () => {
       const credentials = btoa(`:${config.httpPassword}`);
       const data = await fetch(`${config.httpHost}:${config.httpPort}/getbalance`, {

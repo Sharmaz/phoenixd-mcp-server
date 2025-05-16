@@ -6,8 +6,8 @@ export function registerGetNodeInfoTool(
   config: PhoenixdMcpConfig,
 ) {
   server.tool(
-    'get-info',
-    'Get the node info using phoenixd API',
+    'get-node-info',
+    'Get the node info',
     async () => {
       const credentials = btoa(`:${config.httpPassword}`);
       const data = await fetch(`${config.httpHost}:${config.httpPort}/getinfo`, {
