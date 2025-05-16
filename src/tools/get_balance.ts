@@ -1,5 +1,4 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { z } from 'zod';
 import { PhoenixdMcpConfig } from '../types';
 
 export function registerGetBalanceTool(
@@ -9,9 +8,6 @@ export function registerGetBalanceTool(
   server.tool(
     'get-balance',
     'Get the balance of the wallet using phoenixd API',
-    {
-      balance: z.string().describe('Get phoenixd balance'),
-    },
     async () => {
       const credentials = btoa(`:${config.httpPassword}`);
       const data = await fetch(`${config.httpHost}:${config.httpPort}/getbalance`, {
