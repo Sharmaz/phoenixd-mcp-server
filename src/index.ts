@@ -9,6 +9,8 @@ import { registerListChannelsTool } from './tools/list_channels.js';
 import { registerCloseChannelTool } from './tools/close_channel.js';
 import { registerDecodeInvoiceTool } from './tools/decode_invoice.js';
 import { registerDecodeOfferTool } from './tools/decode_offer.js';
+import { registerCreateInvoiceTool } from './tools/create_invoice.js';
+import { registerPayInvoiceTool } from './tools/pay_invoice.js';
 
 const config = {
   httpPassword: process.env.HTTP_PASSWORD || '',
@@ -32,6 +34,8 @@ await registerListChannelsTool(server, config);
 await registerCloseChannelTool(server, config);
 await registerDecodeInvoiceTool(server, config);
 await registerDecodeOfferTool(server, config);
+await registerCreateInvoiceTool(server, config);
+await registerPayInvoiceTool(server, config);
 
 const transport = new StdioServerTransport();
 await server.connect(transport);
