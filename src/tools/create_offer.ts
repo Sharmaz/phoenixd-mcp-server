@@ -38,7 +38,7 @@ export function registerCreateOfferTool(
           content: [
             {
               type: 'text',
-              text: 'Invoice not created',
+              text: 'Offer not created',
             },
           ],
         };

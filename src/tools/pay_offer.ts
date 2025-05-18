@@ -41,7 +41,7 @@ export function registerPayOfferTool(
           content: [
             {
               type: 'text',
-              text: 'Invoice not created',
+              text: 'Payment failed',
             },
           ],
         };

@@ -39,7 +39,7 @@ export function registerPayInvoiceTool(
           content: [
             {
               type: 'text',
-              text: 'Invoice not paid',
+              text: 'Payment failed',
             },
           ],
         };

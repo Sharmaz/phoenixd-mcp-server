@@ -2,23 +2,23 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { PhoenixdMcpConfig } from '../types';
 
-export function registerDecodeOfferTool(
+export function registerBumpFeeTool(
   server: McpServer,
   config: PhoenixdMcpConfig,
 ) {
   server.tool(
-    'decode-offer',
-    'Decode an bolt12 offer the output amount is in milisatoshis',
+    'bump-fee',
+    'Makes all your unconfirmed transactions use a higher fee rate, using CPFP. Returns the ID of the child transaction',
     {
-      offer: z.string().describe('The bolt12 offer to decode'),
+      feerateSatByte: z.number().describe('The fee rate in satoshis per byte'),
     },
-    async ({ offer }) => {
+    async ({ feerateSatByte }) => {
       const credentials = btoa(`:${config.httpPassword}`);
       const params = new URLSearchParams({
-        offer,
+        feerateSatByte: feerateSatByte.toString(),
       });
 
-      const data = await fetch(`${config.httpHost}:${config.httpPort}/decodeoffer`, {
+      const data = await fetch(`${config.httpHost}:${config.httpPort}/bumpfee`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -27,14 +27,14 @@ export function registerDecodeOfferTool(
         body: params.toString(),
       });
 
-      const decodedOfferData = await data.json();
+      const bumpFeeData = await data.text();
 
-      if (decodedOfferData.length === 0) {
+      if (bumpFeeData.length === 0) {
         return {
           content: [
             {
               type: 'text',
-              text: 'Offer not decoded',
+              text: 'Bump fee failed',
             },
           ],
         };
@@ -44,7 +44,7 @@ export function registerDecodeOfferTool(
         content: [
           {
             type: 'text',
-            text: JSON.stringify(decodedOfferData, null, 2),
+            text: bumpFeeData,
           },
         ],
       };

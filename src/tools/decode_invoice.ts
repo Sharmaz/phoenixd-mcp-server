@@ -34,7 +34,7 @@ export function registerDecodeInvoiceTool(
           content: [
             {
               type: 'text',
-              text: 'Invoice not found',
+              text: 'Invoice not decoded',
             },
           ],
         };
