@@ -17,6 +17,8 @@ import { registerPayOnChainTool } from './tools/pay_on_chain.js';
 import { registerBumpFeeTool } from './tools/bump_fee.js';
 import { registerListIncomingPaymentsTool } from './tools/list_incoming_payments.js';
 import { registerGetIncomingPaymentTool } from './tools/get_incoming_payment.js';
+import { registerListOutgoingPaymentsTool } from './tools/list_outgoing_payments.js';
+import { registerGetOutgoingPaymentTool } from './tools/get_outgoing_payment.js';
 
 const config = {
   httpPassword: process.env.HTTP_PASSWORD || '',
@@ -48,6 +50,8 @@ await registerPayOnChainTool(server, config);
 await registerBumpFeeTool(server, config);
 await registerListIncomingPaymentsTool(server, config);
 await registerGetIncomingPaymentTool(server, config);
+await registerListOutgoingPaymentsTool(server, config);
+await registerGetOutgoingPaymentTool(server, config);
 
 const transport = new StdioServerTransport();
 await server.connect(transport);
