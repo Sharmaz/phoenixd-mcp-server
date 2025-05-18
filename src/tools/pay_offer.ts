@@ -2,28 +2,30 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { PhoenixdMcpConfig } from '../types';
 
-export function registerPayInvoiceTool(
+export function registerPayOfferTool(
   server: McpServer,
   config: PhoenixdMcpConfig,
 ) {
   server.tool(
-    'pay-invoice',
-    'Pay a bolt11 invoice with a specified amount and description',
+    'pay-offer',
+    'Pay a bolt12 offer',
     {
-      amountSat: z.number().optional().describe('The amount to pay, in satoshi. If not set, will pay the amount requested in the invoice.'),
-      invoice: z.string().describe('The bolt11 invoice to pay.'),
+      amountSat: z.number().optional().describe('The amount in satoshi. If unset, will pay the amount requested in the offer.'),
+      offer: z.string().describe('The bolt12 offer to pay.'),
+      message: z.string().optional().describe('A message for the recipient.'),
     },
-    async ({ amountSat, invoice }) => {
+    async ({ amountSat, offer, message }) => {
       const credentials = btoa(`:${config.httpPassword}`);
       const paramsObj: Record<string, string> = {
-        invoice,
+        offer,
       };
 
       if (amountSat !== undefined) paramsObj.amountSat = amountSat.toString();
+      if (message !== undefined) paramsObj.message = message;
 
       const params = new URLSearchParams(paramsObj);
 
-      const data = await fetch(`${config.httpHost}:${config.httpPort}/payinvoice`, {
+      const data = await fetch(`${config.httpHost}:${config.httpPort}/payoffer`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -32,14 +34,14 @@ export function registerPayInvoiceTool(
         body: params.toString(),
       });
 
-      const payInvoiceData = await data.json();
+      const payOfferData = await data.json();
 
-      if (payInvoiceData.length === 0) {
+      if (payOfferData.length === 0) {
         return {
           content: [
             {
               type: 'text',
-              text: 'Invoice not paid',
+              text: 'Invoice not created',
             },
           ],
         };
@@ -49,7 +51,7 @@ export function registerPayInvoiceTool(
         content: [
           {
             type: 'text',
-            text: JSON.stringify(payInvoiceData, null, 2),
+            text: JSON.stringify(payOfferData, null, 2),
           },
         ],
       };

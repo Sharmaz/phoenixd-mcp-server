@@ -39,7 +39,7 @@ export function registerCreateInvoiceTool(
         body: params.toString(),
       });
 
-      const createInvoiceData = await data.text();
+      const createInvoiceData = await data.json();
 
       if (createInvoiceData.length === 0) {
         return {
@@ -56,7 +56,7 @@ export function registerCreateInvoiceTool(
         content: [
           {
             type: 'text',
-            text: createInvoiceData,
+            text: JSON.stringify(createInvoiceData, null, 2),
           },
         ],
       };
