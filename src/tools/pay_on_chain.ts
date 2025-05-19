@@ -2,27 +2,27 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { PhoenixdMcpConfig } from '../types';
 
-export function registerCloseChannelTool(
+export function registerPayOnChainTool(
   server: McpServer,
   config: PhoenixdMcpConfig,
 ) {
   server.tool(
-    'close-channel',
-    'Close a channel by ID, sending the funds to a specified address on chain, with a specified fee rate',
+    'pay-on-chain',
+    'Pay an on-chain address with a specified amount and fee rate',
     {
-      channelId: z.string().describe('The ID of the channel to close'),
+      amountSat: z.number().describe('The amount in satoshi'),
       address: z.string().describe('The Bitcoin on chain address to send the funds to'),
       feerateSatByte: z.number().describe('The fee rate in satoshis per byte'),
     },
-    async ({ channelId, address, feerateSatByte }) => {
+    async ({ amountSat, address, feerateSatByte }) => {
       const credentials = btoa(`:${config.httpPassword}`);
       const params = new URLSearchParams({
-        channelId,
+        amountSat: amountSat.toString(),
         address,
         feerateSatByte: feerateSatByte.toString(),
       });
 
-      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/closechannel`, {
+      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/sendtoaddress`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -31,14 +31,14 @@ export function registerCloseChannelTool(
         body: params.toString(),
       });
 
-      const closeChannelData = await data.text();
+      const payOnChainData = await data.text();
 
-      if (closeChannelData.length === 0) {
+      if (payOnChainData.length === 0) {
         return {
           content: [
             {
               type: 'text',
-              text: 'Channel not found',
+              text: 'Payment failed',
             },
           ],
         };
@@ -48,7 +48,7 @@ export function registerCloseChannelTool(
         content: [
           {
             type: 'text',
-            text: closeChannelData,
+            text: payOnChainData,
           },
         ],
       };

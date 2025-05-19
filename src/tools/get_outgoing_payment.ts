@@ -1,16 +1,21 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { z } from 'zod';
 import { PhoenixdMcpConfig } from '../types';
 
-export function registerGetNodeInfoTool(
+export function registerGetOutgoingPaymentTool(
   server: McpServer,
   config: PhoenixdMcpConfig,
 ) {
   server.tool(
-    'get-node-info',
-    'Get the node info',
-    async () => {
+    'get-outgoing-payment',
+    'Get the outgoing payment by payment id',
+    {
+      paymentId: z.string().describe('payment hash of the outgoing payment'),
+    },
+    async ({ paymentId }) => {
       const credentials = btoa(`:${config.httpPassword}`);
-      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/getinfo`, {
+
+      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/payments/outgoing/${paymentId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -18,14 +23,14 @@ export function registerGetNodeInfoTool(
         },
       });
 
-      const nodeInfoData = await data.json();
+      const getOutgoingPaymentData = await data.json();
 
-      if (nodeInfoData.length === 0) {
+      if (getOutgoingPaymentData.length === 0) {
         return {
           content: [
             {
               type: 'text',
-              text: 'Node info not found',
+              text: 'Incoming payment not found',
             },
           ],
         };
@@ -35,7 +40,7 @@ export function registerGetNodeInfoTool(
         content: [
           {
             type: 'text',
-            text: JSON.stringify(nodeInfoData, null, 2),
+            text: JSON.stringify(getOutgoingPaymentData, null, 2),
           },
         ],
       };

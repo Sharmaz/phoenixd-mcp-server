@@ -2,23 +2,23 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { PhoenixdMcpConfig } from '../types';
 
-export function registerDecodeInvoiceTool(
+export function registerBumpFeeTool(
   server: McpServer,
   config: PhoenixdMcpConfig,
 ) {
   server.tool(
-    'decode-invoice',
-    'Decode an bolt11 invoice, the output amount is in milisatoshis',
+    'bump-fee',
+    'Makes all your unconfirmed transactions use a higher fee rate, using CPFP. Returns the ID of the child transaction',
     {
-      invoice: z.string().describe('The bolt11 invoice to decode'),
+      feerateSatByte: z.number().describe('The fee rate in satoshis per byte'),
     },
-    async ({ invoice }) => {
+    async ({ feerateSatByte }) => {
       const credentials = btoa(`:${config.httpPassword}`);
       const params = new URLSearchParams({
-        invoice,
+        feerateSatByte: feerateSatByte.toString(),
       });
 
-      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/decodeinvoice`, {
+      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/bumpfee`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -27,14 +27,14 @@ export function registerDecodeInvoiceTool(
         body: params.toString(),
       });
 
-      const decodedInvoiceData = await data.json();
+      const bumpFeeData = await data.text();
 
-      if (decodedInvoiceData.length === 0) {
+      if (bumpFeeData.length === 0) {
         return {
           content: [
             {
               type: 'text',
-              text: 'Invoice not decoded',
+              text: 'Bump fee failed',
             },
           ],
         };
@@ -44,7 +44,7 @@ export function registerDecodeInvoiceTool(
         content: [
           {
             type: 'text',
-            text: JSON.stringify(decodedInvoiceData, null, 2),
+            text: bumpFeeData,
           },
         ],
       };

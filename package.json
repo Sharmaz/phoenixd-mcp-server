@@ -1,6 +1,6 @@
 {
   "name": "phoenixd-mcp-server",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "description": "Connect a phoenixd bitcoin lightning wallet to your LLM.",
   "keywords": [
     "phoenixd",
