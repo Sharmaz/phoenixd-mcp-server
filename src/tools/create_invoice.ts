@@ -30,7 +30,7 @@ export function registerCreateInvoiceTool(
 
       const params = new URLSearchParams(paramsObj);
 
-      const data = await fetch(`${config.httpHost}:${config.httpPort}/createinvoice`, {
+      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/createinvoice`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

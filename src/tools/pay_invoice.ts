@@ -23,7 +23,7 @@ export function registerPayInvoiceTool(
 
       const params = new URLSearchParams(paramsObj);
 
-      const data = await fetch(`${config.httpHost}:${config.httpPort}/payinvoice`, {
+      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/payinvoice`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

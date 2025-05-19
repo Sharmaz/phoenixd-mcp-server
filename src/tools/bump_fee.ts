@@ -18,7 +18,7 @@ export function registerBumpFeeTool(
         feerateSatByte: feerateSatByte.toString(),
       });
 
-      const data = await fetch(`${config.httpHost}:${config.httpPort}/bumpfee`, {
+      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/bumpfee`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

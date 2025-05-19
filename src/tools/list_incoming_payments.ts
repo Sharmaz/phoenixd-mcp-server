@@ -38,7 +38,7 @@ export function registerListIncomingPaymentsTool(
 
       const params = new URLSearchParams(paramsObj);
 
-      const data = await fetch(`${config.httpHost}:${config.httpPort}/payments/incoming?${params.toString()}`, {
+      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/payments/incoming?${params.toString()}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

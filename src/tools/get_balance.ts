@@ -10,7 +10,7 @@ export function registerGetBalanceTool(
     'Get the balance of the node',
     async () => {
       const credentials = btoa(`:${config.httpPassword}`);
-      const data = await fetch(`${config.httpHost}:${config.httpPort}/getbalance`, {
+      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/getbalance`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

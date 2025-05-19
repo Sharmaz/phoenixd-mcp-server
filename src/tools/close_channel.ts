@@ -22,7 +22,7 @@ export function registerCloseChannelTool(
         feerateSatByte: feerateSatByte.toString(),
       });
 
-      const data = await fetch(`${config.httpHost}:${config.httpPort}/closechannel`, {
+      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/closechannel`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

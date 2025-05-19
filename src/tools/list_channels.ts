@@ -10,7 +10,7 @@ export function registerListChannelsTool(
     'List the node channels',
     async () => {
       const credentials = btoa(`:${config.httpPassword}`);
-      const data = await fetch(`${config.httpHost}:${config.httpPort}/listchannels`, {
+      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/listchannels`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

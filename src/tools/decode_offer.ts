@@ -18,7 +18,7 @@ export function registerDecodeOfferTool(
         offer,
       });
 
-      const data = await fetch(`${config.httpHost}:${config.httpPort}/decodeoffer`, {
+      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/decodeoffer`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

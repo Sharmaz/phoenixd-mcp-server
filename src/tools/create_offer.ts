@@ -22,7 +22,7 @@ export function registerCreateOfferTool(
 
       const params = new URLSearchParams(paramsObj);
 
-      const data = await fetch(`${config.httpHost}:${config.httpPort}/createoffer`, {
+      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/createoffer`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

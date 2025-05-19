@@ -22,18 +22,19 @@ import { registerGetOutgoingPaymentTool } from './tools/get_outgoing_payment.js'
 
 const config = {
   httpPassword: process.env.HTTP_PASSWORD || '',
-  httpPort: process.env.HTTP_PORT || '',
+  httpPort: process.env.HTTP_PORT || '9740',
   httpHost: process.env.HTTP_HOST || '',
+  httpProtocol: process.env.HTTP_PROTOCOL || 'http',
 };
 
-if (!process.env.HTTP_PASSWORD || !process.env.HTTP_PORT || !process.env.HTTP_HOST) {
-  console.error('HTTP_PASSWORD, HTTP_PORT, and HTTP_HOST are required but not set in the environment variables.');
+if (!process.env.HTTP_PASSWORD || !process.env.HTTP_HOST) {
+  console.error('HTTP_PASSWORD and HTTP_HOST are required but not set in the environment variables.');
   process.exit(1);
 }
 
 const server = new McpServer({
   name: 'phoenixd-mcp-server',
-  version: '0.1.2',
+  version: '1.0.0',
 });
 
 await registerGetBalanceTool(server, config);

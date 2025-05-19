@@ -25,7 +25,7 @@ export function registerPayOfferTool(
 
       const params = new URLSearchParams(paramsObj);
 
-      const data = await fetch(`${config.httpHost}:${config.httpPort}/payoffer`, {
+      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/payoffer`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

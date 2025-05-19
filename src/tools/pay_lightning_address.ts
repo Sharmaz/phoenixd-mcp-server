@@ -25,7 +25,7 @@ export function registerPayLightningAddressTool(
 
       const params = new URLSearchParams(paramsObj);
 
-      const data = await fetch(`${config.httpHost}:${config.httpPort}/paylnaddress`, {
+      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/paylnaddress`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

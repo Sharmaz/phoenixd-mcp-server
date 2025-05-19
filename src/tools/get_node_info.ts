@@ -10,7 +10,7 @@ export function registerGetNodeInfoTool(
     'Get the node info',
     async () => {
       const credentials = btoa(`:${config.httpPassword}`);
-      const data = await fetch(`${config.httpHost}:${config.httpPort}/getinfo`, {
+      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/getinfo`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

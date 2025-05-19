@@ -15,7 +15,7 @@ export function registerGetIncomingPaymentTool(
     async ({ paymentHash }) => {
       const credentials = btoa(`:${config.httpPassword}`);
 
-      const data = await fetch(`${config.httpHost}:${config.httpPort}/payments/incoming/${paymentHash}`, {
+      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/payments/incoming/${paymentHash}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

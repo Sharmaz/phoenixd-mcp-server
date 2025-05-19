@@ -22,7 +22,7 @@ export function registerPayOnChainTool(
         feerateSatByte: feerateSatByte.toString(),
       });
 
-      const data = await fetch(`${config.httpHost}:${config.httpPort}/sendtoaddress`, {
+      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/sendtoaddress`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
