@@ -11,6 +11,7 @@ import { registerDecodeInvoiceTool } from './tools/decode_invoice.js';
 import { registerDecodeOfferTool } from './tools/decode_offer.js';
 import { registerCreateInvoiceTool } from './tools/create_invoice.js';
 import { registerPayInvoiceTool } from './tools/pay_invoice.js';
+import { registerCreateOfferTool } from './tools/create_offer.js';
 import { registerPayOfferTool } from './tools/pay_offer.js';
 import { registerPayLightningAddressTool } from './tools/pay_lightning_address.js';
 import { registerPayOnChainTool } from './tools/pay_on_chain.js';
@@ -34,7 +35,7 @@ if (!process.env.HTTP_PASSWORD || !process.env.HTTP_HOST) {
 
 const server = new McpServer({
   name: 'phoenixd-mcp-server',
-  version: '1.0.0',
+  version: '1.0.1',
 });
 
 await registerGetBalanceTool(server, config);
@@ -45,6 +46,7 @@ await registerDecodeInvoiceTool(server, config);
 await registerDecodeOfferTool(server, config);
 await registerCreateInvoiceTool(server, config);
 await registerPayInvoiceTool(server, config);
+await registerCreateOfferTool(server, config);
 await registerPayOfferTool(server, config);
 await registerPayLightningAddressTool(server, config);
 await registerPayOnChainTool(server, config);

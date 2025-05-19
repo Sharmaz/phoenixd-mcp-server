@@ -44,7 +44,7 @@ Add this to your `claude_desktop_config.json` file:
     - `webhookUrl` (string, optional): A webhook URL to be notified when this payment is received.
 
 - `create-offer`
-  - Create a bolt12 offer. [Not Available]
+  - Create a bolt12 offer.
   - Inputs:
     - `description` (string): The description of the offer.
     - `amountSat` (number, optional): The amount requested by the offer, in satoshi.
