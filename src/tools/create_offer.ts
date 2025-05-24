@@ -1,6 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { PhoenixdMcpConfig } from '../types';
+import { validateEnv } from '../utils/validate_env.js';
 
 export function registerCreateOfferTool(
   server: McpServer,
@@ -14,6 +15,7 @@ export function registerCreateOfferTool(
       amountSat: z.number().optional().describe('The amount requested by the offer, in satoshi. If not set, the offer can be paid by any amount'),
     },
     async ({ description, amountSat }) => {
+      validateEnv(config);
       const credentials = btoa(`:${config.httpPassword}`);
       const paramsObj: Record<string, string> = {};
 

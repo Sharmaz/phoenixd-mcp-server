@@ -28,11 +28,6 @@ const config = {
   httpProtocol: process.env.HTTP_PROTOCOL || 'http',
 };
 
-if (!process.env.HTTP_PASSWORD || !process.env.HTTP_HOST) {
-  console.error('HTTP_PASSWORD and HTTP_HOST are required but not set in the environment variables.');
-  process.exit(1);
-}
-
 const server = new McpServer({
   name: 'phoenixd-mcp-server',
   version: '1.0.1',

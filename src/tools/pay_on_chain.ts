@@ -1,6 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { PhoenixdMcpConfig } from '../types';
+import { validateEnv } from '../utils/validate_env.js';
 
 export function registerPayOnChainTool(
   server: McpServer,
@@ -15,6 +16,7 @@ export function registerPayOnChainTool(
       feerateSatByte: z.number().describe('The fee rate in satoshis per byte'),
     },
     async ({ amountSat, address, feerateSatByte }) => {
+      validateEnv(config);
       const credentials = btoa(`:${config.httpPassword}`);
       const params = new URLSearchParams({
         amountSat: amountSat.toString(),

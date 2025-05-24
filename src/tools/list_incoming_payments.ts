@@ -1,6 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { PhoenixdMcpConfig } from '../types';
+import { validateEnv } from '../utils/validate_env.js';
 
 export function registerListIncomingPaymentsTool(
   server: McpServer,
@@ -18,6 +19,7 @@ export function registerListIncomingPaymentsTool(
       externalId: z.string().optional().describe('external id of the bolt11 invoice'),
     },
     async ({ from, to, limit, offset, all, externalId }) => {
+      validateEnv(config);
       const credentials = btoa(`:${config.httpPassword}`);
 
       const paramsObj: Record<string, string> = {

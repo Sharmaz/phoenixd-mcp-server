@@ -1,6 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { PhoenixdMcpConfig } from '../types';
+import { validateEnv } from '../utils/validate_env.js';
 
 export function registerGetIncomingPaymentTool(
   server: McpServer,
@@ -13,6 +14,7 @@ export function registerGetIncomingPaymentTool(
       paymentHash: z.string().describe('payment hash of the incoming payment'),
     },
     async ({ paymentHash }) => {
+      validateEnv(config);
       const credentials = btoa(`:${config.httpPassword}`);
 
       const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/payments/incoming/${paymentHash}`, {

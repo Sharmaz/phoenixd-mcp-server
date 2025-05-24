@@ -1,6 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { PhoenixdMcpConfig } from '../types';
+import { validateEnv } from '../utils/validate_env.js';
 
 export function registerDecodeOfferTool(
   server: McpServer,
@@ -13,6 +14,7 @@ export function registerDecodeOfferTool(
       offer: z.string().describe('The bolt12 offer to decode'),
     },
     async ({ offer }) => {
+      validateEnv(config);
       const credentials = btoa(`:${config.httpPassword}`);
       const params = new URLSearchParams({
         offer,

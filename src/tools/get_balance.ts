@@ -1,5 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { PhoenixdMcpConfig } from '../types';
+import { validateEnv } from '../utils/validate_env.js';
 
 export function registerGetBalanceTool(
   server: McpServer,
@@ -9,6 +10,7 @@ export function registerGetBalanceTool(
     'get-balance',
     'Get the balance of the node',
     async () => {
+      validateEnv(config);
       const credentials = btoa(`:${config.httpPassword}`);
       const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/getbalance`, {
         method: 'GET',

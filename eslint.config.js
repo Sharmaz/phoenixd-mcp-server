@@ -31,4 +31,9 @@ export default defineConfig([
   },
   { files: ["src/**/*.{js,mjs,cjs,ts}"], languageOptions: { globals: globals.node } },
   tseslint.configs.recommended,
+  {
+    rules: {
+      "@typescript-eslint/no-explicit-any": 0,
+    }
+  }
 ]);
