@@ -1,6 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { PhoenixdMcpConfig } from '../types';
+import { validateEnv } from '../utils/validate_env.js';
 
 export function registerCloseChannelTool(
   server: McpServer,
@@ -15,6 +16,7 @@ export function registerCloseChannelTool(
       feerateSatByte: z.number().describe('The fee rate in satoshis per byte'),
     },
     async ({ channelId, address, feerateSatByte }) => {
+      validateEnv(config);
       const credentials = btoa(`:${config.httpPassword}`);
       const params = new URLSearchParams({
         channelId,

@@ -1,6 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { PhoenixdMcpConfig } from '../types';
+import { validateEnv } from '../utils/validate_env.js';
 
 export function registerCreateInvoiceTool(
   server: McpServer,
@@ -18,6 +19,7 @@ export function registerCreateInvoiceTool(
       webhookUrl: z.string().optional().describe('A webhook url that will be notified when this specific payment has been received. '),
     },
     async ({ description, amountSat, expirySeconds, externalId, webhookUrl }) => {
+      validateEnv(config);
       const credentials = btoa(`:${config.httpPassword}`);
       const paramsObj: Record<string, string> = {
         description,

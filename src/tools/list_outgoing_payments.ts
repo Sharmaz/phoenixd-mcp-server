@@ -1,6 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { PhoenixdMcpConfig } from '../types';
+import { validateEnv } from '../utils/validate_env.js';
 
 export function registerListOutgoingPaymentsTool(
   server: McpServer,
@@ -17,6 +18,7 @@ export function registerListOutgoingPaymentsTool(
       all: z.boolean().optional().describe('also return payments that have failed'),
     },
     async ({ from, to, limit, offset, all }) => {
+      validateEnv(config);
       const credentials = btoa(`:${config.httpPassword}`);
 
       const paramsObj: Record<string, string> = {

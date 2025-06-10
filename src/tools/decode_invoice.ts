@@ -1,6 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { PhoenixdMcpConfig } from '../types';
+import { validateEnv } from '../utils/validate_env.js';
 
 export function registerDecodeInvoiceTool(
   server: McpServer,
@@ -13,6 +14,7 @@ export function registerDecodeInvoiceTool(
       invoice: z.string().describe('The bolt11 invoice to decode'),
     },
     async ({ invoice }) => {
+      validateEnv(config);
       const credentials = btoa(`:${config.httpPassword}`);
       const params = new URLSearchParams({
         invoice,

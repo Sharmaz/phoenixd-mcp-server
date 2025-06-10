@@ -21,7 +21,7 @@ Add this to your `claude_desktop_config.json` file:
       ],
       "env": {
         "HTTP_PROTOCOL": "<http or https>",   // If not set http is the default value.
-        "HTTP_HOST": "<your_host>",           // 127.0.0.1 or your-domain.com
+        "HTTP_HOST": "<your_host>",           // If not set 127.0.0.1 is the default host.
         "HTTP_PORT": "<your_phoenixd_port>",  // If not set 9740 is the default port.
         "HTTP_PASSWORD": "<phoenixd_http_password>"
       }
