@@ -1,6 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { PhoenixdMcpConfig } from '../types';
+import { PhoenixdMcpConfig } from '../types/index.js';
 import { validateEnv } from '../utils/validate_env.js';
+import { fetchPhoenixd, formatToolResponse, formatToolError } from '../utils/fetch_phoenixd.js';
 
 export function registerGetBalanceTool(
   server: McpServer,
@@ -11,36 +12,14 @@ export function registerGetBalanceTool(
     'Get the balance of the node',
     async () => {
       validateEnv(config);
-      const credentials = btoa(`:${config.httpPassword}`);
-      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/getbalance`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Basic ${credentials}`,
-        },
-      });
 
-      const balanceData = await data.json();
+      const result = await fetchPhoenixd(config, '/getbalance', { method: 'GET' });
 
-      if (balanceData.length === 0) {
-        return {
-          content: [
-            {
-              type: 'text',
-              text: 'Balance not found',
-            },
-          ],
-        };
+      if (!result.ok) {
+        return formatToolError(result.error);
       }
 
-      return {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify(balanceData, null, 2),
-          },
-        ],
-      };
+      return formatToolResponse(result.data);
     },
   );
 }

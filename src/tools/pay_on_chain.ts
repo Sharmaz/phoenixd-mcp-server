@@ -1,7 +1,8 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { PhoenixdMcpConfig } from '../types';
+import { PhoenixdMcpConfig } from '../types/index.js';
 import { validateEnv } from '../utils/validate_env.js';
+import { fetchPhoenixd, formatToolResponse, formatToolError } from '../utils/fetch_phoenixd.js';
 
 export function registerPayOnChainTool(
   server: McpServer,
@@ -17,43 +18,24 @@ export function registerPayOnChainTool(
     },
     async ({ amountSat, address, feerateSatByte }) => {
       validateEnv(config);
-      const credentials = btoa(`:${config.httpPassword}`);
+
       const params = new URLSearchParams({
         amountSat: amountSat.toString(),
         address,
         feerateSatByte: feerateSatByte.toString(),
       });
 
-      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/sendtoaddress`, {
+      const result = await fetchPhoenixd(config, '/sendtoaddress', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': `Basic ${credentials}`,
-        },
-        body: params.toString(),
+        body: params,
+        responseType: 'text',
       });
 
-      const payOnChainData = await data.text();
-
-      if (payOnChainData.length === 0) {
-        return {
-          content: [
-            {
-              type: 'text',
-              text: 'Payment failed',
-            },
-          ],
-        };
+      if (!result.ok) {
+        return formatToolError(result.error);
       }
 
-      return {
-        content: [
-          {
-            type: 'text',
-            text: payOnChainData,
-          },
-        ],
-      };
+      return formatToolResponse(result.data);
     },
   );
 }

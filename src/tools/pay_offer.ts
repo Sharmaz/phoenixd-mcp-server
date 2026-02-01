@@ -1,7 +1,8 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { PhoenixdMcpConfig } from '../types';
+import { PhoenixdMcpConfig } from '../types/index.js';
 import { validateEnv } from '../utils/validate_env.js';
+import { fetchPhoenixd, formatToolResponse, formatToolError } from '../utils/fetch_phoenixd.js';
 
 export function registerPayOfferTool(
   server: McpServer,
@@ -17,46 +18,21 @@ export function registerPayOfferTool(
     },
     async ({ amountSat, offer, message }) => {
       validateEnv(config);
-      const credentials = btoa(`:${config.httpPassword}`);
-      const paramsObj: Record<string, string> = {
-        offer,
-      };
 
+      const paramsObj: Record<string, string> = { offer };
       if (amountSat !== undefined) paramsObj.amountSat = amountSat.toString();
       if (message !== undefined) paramsObj.message = message;
 
-      const params = new URLSearchParams(paramsObj);
-
-      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/payoffer`, {
+      const result = await fetchPhoenixd(config, '/payoffer', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': `Basic ${credentials}`,
-        },
-        body: params.toString(),
+        body: new URLSearchParams(paramsObj),
       });
 
-      const payOfferData = await data.json();
-
-      if (payOfferData.length === 0) {
-        return {
-          content: [
-            {
-              type: 'text',
-              text: 'Payment failed',
-            },
-          ],
-        };
+      if (!result.ok) {
+        return formatToolError(result.error);
       }
 
-      return {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify(payOfferData, null, 2),
-          },
-        ],
-      };
+      return formatToolResponse(result.data);
     },
   );
 }

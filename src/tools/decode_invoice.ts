@@ -1,7 +1,8 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { PhoenixdMcpConfig } from '../types';
+import { PhoenixdMcpConfig } from '../types/index.js';
 import { validateEnv } from '../utils/validate_env.js';
+import { fetchPhoenixd, formatToolResponse, formatToolError } from '../utils/fetch_phoenixd.js';
 
 export function registerDecodeInvoiceTool(
   server: McpServer,
@@ -15,41 +16,19 @@ export function registerDecodeInvoiceTool(
     },
     async ({ invoice }) => {
       validateEnv(config);
-      const credentials = btoa(`:${config.httpPassword}`);
-      const params = new URLSearchParams({
-        invoice,
-      });
 
-      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/decodeinvoice`, {
+      const params = new URLSearchParams({ invoice });
+
+      const result = await fetchPhoenixd(config, '/decodeinvoice', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': `Basic ${credentials}`,
-        },
-        body: params.toString(),
+        body: params,
       });
 
-      const decodedInvoiceData = await data.json();
-
-      if (decodedInvoiceData.length === 0) {
-        return {
-          content: [
-            {
-              type: 'text',
-              text: 'Invoice not decoded',
-            },
-          ],
-        };
+      if (!result.ok) {
+        return formatToolError(result.error);
       }
 
-      return {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify(decodedInvoiceData, null, 2),
-          },
-        ],
-      };
+      return formatToolResponse(result.data);
     },
   );
 }

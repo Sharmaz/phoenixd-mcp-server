@@ -1,7 +1,8 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { PhoenixdMcpConfig } from '../types';
+import { PhoenixdMcpConfig } from '../types/index.js';
 import { validateEnv } from '../utils/validate_env.js';
+import { fetchPhoenixd, formatToolResponse, formatToolError } from '../utils/fetch_phoenixd.js';
 
 export function registerDecodeOfferTool(
   server: McpServer,
@@ -15,41 +16,19 @@ export function registerDecodeOfferTool(
     },
     async ({ offer }) => {
       validateEnv(config);
-      const credentials = btoa(`:${config.httpPassword}`);
-      const params = new URLSearchParams({
-        offer,
-      });
 
-      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/decodeoffer`, {
+      const params = new URLSearchParams({ offer });
+
+      const result = await fetchPhoenixd(config, '/decodeoffer', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': `Basic ${credentials}`,
-        },
-        body: params.toString(),
+        body: params,
       });
 
-      const decodedOfferData = await data.json();
-
-      if (decodedOfferData.length === 0) {
-        return {
-          content: [
-            {
-              type: 'text',
-              text: 'Offer not decoded',
-            },
-          ],
-        };
+      if (!result.ok) {
+        return formatToolError(result.error);
       }
 
-      return {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify(decodedOfferData, null, 2),
-          },
-        ],
-      };
+      return formatToolResponse(result.data);
     },
   );
 }
