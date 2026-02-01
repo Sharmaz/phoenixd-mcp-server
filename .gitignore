@@ -89,5 +89,8 @@ lerna-debug.log
 .DS_Store
 Thumbs.db
 
+# Node Version Managers
+.tool-versions
+
 # AI Agents or Tools
 CLAUDE.md
