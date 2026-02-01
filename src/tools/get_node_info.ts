@@ -1,6 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { PhoenixdMcpConfig } from '../types';
+import { PhoenixdMcpConfig } from '../types/index.js';
 import { validateEnv } from '../utils/validate_env.js';
+import { fetchPhoenixd, formatToolResponse, formatToolError } from '../utils/fetch_phoenixd.js';
 
 export function registerGetNodeInfoTool(
   server: McpServer,
@@ -11,36 +12,14 @@ export function registerGetNodeInfoTool(
     'Get the node info',
     async () => {
       validateEnv(config);
-      const credentials = btoa(`:${config.httpPassword}`);
-      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/getinfo`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Basic ${credentials}`,
-        },
-      });
 
-      const nodeInfoData = await data.json();
+      const result = await fetchPhoenixd(config, '/getinfo', { method: 'GET' });
 
-      if (nodeInfoData.length === 0) {
-        return {
-          content: [
-            {
-              type: 'text',
-              text: 'Node info not found',
-            },
-          ],
-        };
+      if (!result.ok) {
+        return formatToolError(result.error);
       }
 
-      return {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify(nodeInfoData, null, 2),
-          },
-        ],
-      };
+      return formatToolResponse(result.data);
     },
   );
 }

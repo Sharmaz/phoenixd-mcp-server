@@ -1,7 +1,8 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { PhoenixdMcpConfig } from '../types';
+import { PhoenixdMcpConfig } from '../types/index.js';
 import { validateEnv } from '../utils/validate_env.js';
+import { fetchPhoenixd, formatToolResponse, formatToolError } from '../utils/fetch_phoenixd.js';
 
 export function registerCreateInvoiceTool(
   server: McpServer,
@@ -20,48 +21,23 @@ export function registerCreateInvoiceTool(
     },
     async ({ description, amountSat, expirySeconds, externalId, webhookUrl }) => {
       validateEnv(config);
-      const credentials = btoa(`:${config.httpPassword}`);
-      const paramsObj: Record<string, string> = {
-        description,
-      };
 
+      const paramsObj: Record<string, string> = { description };
       if (amountSat !== undefined) paramsObj.amountSat = amountSat.toString();
       if (expirySeconds !== undefined) paramsObj.expirySeconds = expirySeconds.toString();
       if (externalId !== undefined) paramsObj.externalId = externalId;
       if (webhookUrl !== undefined) paramsObj.webhookUrl = webhookUrl;
 
-      const params = new URLSearchParams(paramsObj);
-
-      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/createinvoice`, {
+      const result = await fetchPhoenixd(config, '/createinvoice', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': `Basic ${credentials}`,
-        },
-        body: params.toString(),
+        body: new URLSearchParams(paramsObj),
       });
 
-      const createInvoiceData = await data.json();
-
-      if (createInvoiceData.length === 0) {
-        return {
-          content: [
-            {
-              type: 'text',
-              text: 'Invoice not created',
-            },
-          ],
-        };
+      if (!result.ok) {
+        return formatToolError(result.error);
       }
 
-      return {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify(createInvoiceData, null, 2),
-          },
-        ],
-      };
+      return formatToolResponse(result.data);
     },
   );
 }

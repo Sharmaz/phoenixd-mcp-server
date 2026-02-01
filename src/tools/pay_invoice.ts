@@ -1,7 +1,8 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { PhoenixdMcpConfig } from '../types';
+import { PhoenixdMcpConfig } from '../types/index.js';
 import { validateEnv } from '../utils/validate_env.js';
+import { fetchPhoenixd, formatToolResponse, formatToolError } from '../utils/fetch_phoenixd.js';
 
 export function registerPayInvoiceTool(
   server: McpServer,
@@ -16,45 +17,20 @@ export function registerPayInvoiceTool(
     },
     async ({ amountSat, invoice }) => {
       validateEnv(config);
-      const credentials = btoa(`:${config.httpPassword}`);
-      const paramsObj: Record<string, string> = {
-        invoice,
-      };
 
+      const paramsObj: Record<string, string> = { invoice };
       if (amountSat !== undefined) paramsObj.amountSat = amountSat.toString();
 
-      const params = new URLSearchParams(paramsObj);
-
-      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/payinvoice`, {
+      const result = await fetchPhoenixd(config, '/payinvoice', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': `Basic ${credentials}`,
-        },
-        body: params.toString(),
+        body: new URLSearchParams(paramsObj),
       });
 
-      const payInvoiceData = await data.json();
-
-      if (payInvoiceData.length === 0) {
-        return {
-          content: [
-            {
-              type: 'text',
-              text: 'Payment failed',
-            },
-          ],
-        };
+      if (!result.ok) {
+        return formatToolError(result.error);
       }
 
-      return {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify(payInvoiceData, null, 2),
-          },
-        ],
-      };
+      return formatToolResponse(result.data);
     },
   );
 }

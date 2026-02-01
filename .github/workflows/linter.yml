@@ -1,19 +1,17 @@
-name: ESlint Test
+name: ESLint
+
 on:
   pull_request:
     branches: '**'
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: [20]
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node 20
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - run: npm install
+          node-version: 24
+      - run: npm ci
       - run: npm run lint

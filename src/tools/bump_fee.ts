@@ -1,7 +1,8 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { PhoenixdMcpConfig } from '../types';
+import { PhoenixdMcpConfig } from '../types/index.js';
 import { validateEnv } from '../utils/validate_env.js';
+import { fetchPhoenixd, formatToolResponse, formatToolError } from '../utils/fetch_phoenixd.js';
 
 export function registerBumpFeeTool(
   server: McpServer,
@@ -15,41 +16,22 @@ export function registerBumpFeeTool(
     },
     async ({ feerateSatByte }) => {
       validateEnv(config);
-      const credentials = btoa(`:${config.httpPassword}`);
+
       const params = new URLSearchParams({
         feerateSatByte: feerateSatByte.toString(),
       });
 
-      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/bumpfee`, {
+      const result = await fetchPhoenixd(config, '/bumpfee', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': `Basic ${credentials}`,
-        },
-        body: params.toString(),
+        body: params,
+        responseType: 'text',
       });
 
-      const bumpFeeData = await data.text();
-
-      if (bumpFeeData.length === 0) {
-        return {
-          content: [
-            {
-              type: 'text',
-              text: 'Bump fee failed',
-            },
-          ],
-        };
+      if (!result.ok) {
+        return formatToolError(result.error);
       }
 
-      return {
-        content: [
-          {
-            type: 'text',
-            text: bumpFeeData,
-          },
-        ],
-      };
+      return formatToolResponse(result.data);
     },
   );
 }

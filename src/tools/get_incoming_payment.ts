@@ -1,7 +1,8 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { PhoenixdMcpConfig } from '../types';
+import { PhoenixdMcpConfig } from '../types/index.js';
 import { validateEnv } from '../utils/validate_env.js';
+import { fetchPhoenixd, formatToolResponse, formatToolError } from '../utils/fetch_phoenixd.js';
 
 export function registerGetIncomingPaymentTool(
   server: McpServer,
@@ -15,37 +16,16 @@ export function registerGetIncomingPaymentTool(
     },
     async ({ paymentHash }) => {
       validateEnv(config);
-      const credentials = btoa(`:${config.httpPassword}`);
 
-      const data = await fetch(`${config.httpProtocol}://${config.httpHost}:${config.httpPort}/payments/incoming/${paymentHash}`, {
+      const result = await fetchPhoenixd(config, `/payments/incoming/${paymentHash}`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Basic ${credentials}`,
-        },
       });
 
-      const getIncomingPaymentData = await data.json();
-
-      if (getIncomingPaymentData.length === 0) {
-        return {
-          content: [
-            {
-              type: 'text',
-              text: 'Incoming payment not found',
-            },
-          ],
-        };
+      if (!result.ok) {
+        return formatToolError(result.error);
       }
 
-      return {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify(getIncomingPaymentData, null, 2),
-          },
-        ],
-      };
+      return formatToolResponse(result.data);
     },
   );
 }
