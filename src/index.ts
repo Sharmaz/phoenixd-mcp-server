@@ -14,7 +14,7 @@ const config = {
 
 const server = new McpServer({
   name: 'phoenixd-mcp-server',
-  version: '1.0.1',
+  version: '1.0.2',
 });
 
 await tools.registerGetBalanceTool(server, config);
