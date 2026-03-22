@@ -1,0 +1,37 @@
+# Smithery configuration file: https://smithery.ai/docs/config#smitheryyaml
+
+startCommand:
+  type: stdio
+
+configSchema:
+  type: object
+  required:
+    - httpPassword
+  properties:
+    httpPassword:
+      type: string
+      description: "Phoenixd HTTP password. Found in ~/.phoenix/phoenix.conf after first run."
+    httpProtocol:
+      type: string
+      default: http
+      description: "Protocol to connect to phoenixd. Use 'https' for remote nodes behind TLS."
+    httpHost:
+      type: string
+      default: 127.0.0.1
+      description: "Host where phoenixd is running."
+    httpPort:
+      type: number
+      default: 9740
+      description: "Port where phoenixd is listening."
+
+commandFunction: |-
+  (config) => ({
+    command: 'npx',
+    args: ['-y', 'phoenixd-mcp-server'],
+    env: {
+      HTTP_PASSWORD: config.httpPassword,
+      HTTP_PROTOCOL: config.httpProtocol || 'http',
+      HTTP_HOST: config.httpHost || '127.0.0.1',
+      HTTP_PORT: String(config.httpPort || 9740),
+    }
+  })

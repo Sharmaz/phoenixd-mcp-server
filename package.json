@@ -5,11 +5,19 @@
   "keywords": [
     "phoenixd",
     "model-context-protocol",
+    "mcp",
+    "mcp-server",
     "bitcoin",
     "lightning",
+    "lightning-network",
+    "bolt11",
+    "bolt12",
     "wallet",
-    "mcp",
-    "ai"
+    "payments",
+    "ai",
+    "ai-agent",
+    "llm",
+    "agentic-payments"
   ],
   "homepage": "https://github.com/Sharmaz/phoenixd-mcp-server#readme",
   "bugs": {

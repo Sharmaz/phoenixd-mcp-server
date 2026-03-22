@@ -4,6 +4,18 @@ Connect a phoenixd bitcoin lightning wallet to your LLM.
 
 This MCP server uses [MCP TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk) and [Phoenixd API](https://phoenix.acinq.co/server/api).
 
+## Prerequisites
+
+You need a running [phoenixd](https://github.com/ACINQ/phoenixd) node. Phoenixd generates an HTTP password on first run and writes it to `~/.phoenix/phoenix.conf`:
+
+```
+http-password=your_generated_password
+```
+
+Use that value for `HTTP_PASSWORD` in the configuration below.
+
+Node.js >= 18 is required.
+
 ## Configuration
 
 ### Usage with Claude Desktop
@@ -13,17 +25,41 @@ Add this to your `claude_desktop_config.json` file:
 ```json
 {
   "mcpServers": {
-    "phoenixd-mpc-server": {
+    "phoenixd-mcp-server": {
       "command": "npx",
       "args": [
         "-y",
         "phoenixd-mcp-server"
       ],
       "env": {
-        "HTTP_PROTOCOL": "<http or https>",   // If not set http is the default value.
-        "HTTP_HOST": "<your_host>",           // If not set 127.0.0.1 is the default host.
-        "HTTP_PORT": "<your_phoenixd_port>",  // If not set 9740 is the default port.
-        "HTTP_PASSWORD": "<phoenixd_http_password>"
+        "HTTP_PROTOCOL": "http",
+        "HTTP_HOST": "127.0.0.1",
+        "HTTP_PORT": "9740",
+        "HTTP_PASSWORD": "<your_password_from_phoenix.conf>"
+      }
+    }
+  }
+}
+```
+
+### Remote node (VPS / HTTPS)
+
+If phoenixd runs on a remote server behind a reverse proxy with TLS:
+
+```json
+{
+  "mcpServers": {
+    "phoenixd-mcp-server": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "phoenixd-mcp-server"
+      ],
+      "env": {
+        "HTTP_PROTOCOL": "https",
+        "HTTP_HOST": "your.server.com",
+        "HTTP_PORT": "9740",
+        "HTTP_PASSWORD": "<your_password_from_phoenix.conf>"
       }
     }
   }
@@ -41,7 +77,7 @@ Add this to your `claude_desktop_config.json` file:
     - `amountSat` (number, optional): The amount requested by the invoice, in satoshi. If not set, the invoice can be paid by any amount.
     - `expirySeconds` (number, optional): The invoice expiry in seconds, default 3600 (1 hour).
     - `externalId` (string, optional): A custom identifier to link the invoice to an external system.
-    - `webhookUrl` (string, optional): A webhook URL to be notified when this payment is received.
+    - `webhookUrl` (string, optional): A URL that phoenixd will POST to when this invoice is paid. The payload is a JSON object with the payment details as defined in the [Phoenixd API docs](https://phoenix.acinq.co/server/api).
 
 - `create-offer`
   - Create a bolt12 offer.
@@ -61,7 +97,7 @@ Add this to your `claude_desktop_config.json` file:
   - Pay a bolt12 offer.
   - Inputs:
     - `offer` (string): The bolt12 offer to pay.
-    - `amountMsat` (number): Amount to pay in millisatoshis.
+    - `amountMsat` (number): Amount to pay in millisatoshis. Required because BOLT12 offers can be reusable and variable-amount.
     - `externalId` (string, optional): A custom identifier to link the payment to an external system.
 
 - `pay-lightning-address`
@@ -135,11 +171,19 @@ Add this to your `claude_desktop_config.json` file:
     - `feerateSatByte` (number): The fee rate in satoshis per byte.
 
 - `decode-invoice`
-  - Decode an bolt11 invoice, the output amount is in milisatoshis.
+  - Decode a bolt11 invoice, the output amount is in millisatoshis.
   - Inputs:
     - `invoice` (string): The bolt11 invoice to decode.
 
 - `decode-offer`
-  - Decode an bolt12 offer, the output amount is in milisatoshis.
+  - Decode a bolt12 offer, the output amount is in millisatoshis.
   - Inputs:
     - `offer` (string): The bolt12 offer to decode.
+
+## Troubleshooting
+
+**`Authentication failed` / `401`** — Check that `HTTP_PASSWORD` matches the value in `~/.phoenix/phoenix.conf`.
+
+**`Connection refused`** — Phoenixd is not running or is listening on a different host/port. Verify with `curl http://127.0.0.1:9740/getinfo -u :your_password`.
+
+**`Node.js version error`** — This package requires Node.js >= 18. Run `node --version` to check.
