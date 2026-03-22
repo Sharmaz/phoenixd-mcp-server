@@ -73,7 +73,8 @@ If phoenixd runs on a remote server behind a reverse proxy with TLS:
 - `create-invoice`
   - Create a bolt11 invoice with a specified amount and description.
   - Inputs:
-    - `description` (string): The description of the invoice (max. 128 characters).
+    - `description` (string, optional): The description of the invoice (max. 128 characters). Either `description` or `descriptionHash` must be provided.
+    - `descriptionHash` (string, optional): SHA256 hash of the description. Use instead of `description`.
     - `amountSat` (number, optional): The amount requested by the invoice, in satoshi. If not set, the invoice can be paid by any amount.
     - `expirySeconds` (number, optional): The invoice expiry in seconds, default 3600 (1 hour).
     - `externalId` (string, optional): A custom identifier to link the invoice to an external system.
@@ -90,22 +91,26 @@ If phoenixd runs on a remote server behind a reverse proxy with TLS:
   - Pay a bolt11 invoice.
   - Inputs:
     - `invoice` (string): The bolt11 invoice to pay.
-    - `amountMsat` (number, optional): Amount to pay in millisatoshis (only for zero-amount invoices).
+    - `amountSat` (number, optional): Amount to pay in satoshis (only for zero-amount invoices). Mutually exclusive with `sendAll`.
+    - `sendAll` (boolean, optional): If true, empties the wallet. Mutually exclusive with `amountSat`.
     - `externalId` (string, optional): A custom identifier to link the payment to an external system.
 
 - `pay-offer`
   - Pay a bolt12 offer.
   - Inputs:
     - `offer` (string): The bolt12 offer to pay.
-    - `amountMsat` (number): Amount to pay in millisatoshis. Required because BOLT12 offers can be reusable and variable-amount.
+    - `amountSat` (number, optional): Amount to pay in satoshis. Mutually exclusive with `sendAll`.
+    - `sendAll` (boolean, optional): If true, empties the wallet. Mutually exclusive with `amountSat`.
+    - `message` (string, optional): A message for the recipient.
     - `externalId` (string, optional): A custom identifier to link the payment to an external system.
 
 - `pay-lightning-address`
   - Pay a Lightning Address.
   - Inputs:
     - `address` (string): The Lightning Address to pay (e.g., swamppawpaw18@phoenixwallet.me).
-    - `amountSat` (number): Amount to pay in satoshis.
-    - `comment` (string, optional): Optional comment to include with the payment.
+    - `amountSat` (number, optional): Amount to pay in satoshis. Mutually exclusive with `sendAll`.
+    - `sendAll` (boolean, optional): If true, empties the wallet. Mutually exclusive with `amountSat`.
+    - `message` (string, optional): Optional message to include with the payment.
 
 - `pay-on-chain`
   - Send an on-chain Bitcoin payment.
@@ -115,9 +120,8 @@ If phoenixd runs on a remote server behind a reverse proxy with TLS:
     - `feerateSatByte` (number, optional): Fee rate in satoshis per byte.
 
 - `bump-fee`
-  - Bump the fee of an unconfirmed on-chain transaction.
+  - Bumps the fee rate of all unconfirmed on-chain transactions using CPFP. Returns the ID of the child transaction.
   - Inputs:
-    - `txId` (string): The transaction ID to bump.
     - `feerateSatByte` (number): New fee rate in satoshis per byte.
 
 - `list-incoming-payments`

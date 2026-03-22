@@ -12,14 +12,17 @@ export function registerPayInvoiceTool(
     'pay-invoice',
     'Pay a bolt11 invoice with a specified amount and description',
     {
-      amountSat: z.number().optional().describe('The amount to pay, in satoshi. If not set, will pay the amount requested in the invoice.'),
       invoice: z.string().describe('The bolt11 invoice to pay.'),
+      amountSat: z.number().optional()
+        .describe('The amount to pay, in satoshi. If not set, will pay the amount requested in the invoice. Mutually exclusive with sendAll.'),
+      sendAll: z.boolean().optional().describe('If true, empties the wallet. Mutually exclusive with amountSat.'),
     },
-    async ({ amountSat, invoice }) => {
+    async ({ amountSat, invoice, sendAll }) => {
       validateEnv(config);
 
       const paramsObj: Record<string, string> = { invoice };
       if (amountSat !== undefined) paramsObj.amountSat = amountSat.toString();
+      if (sendAll !== undefined) paramsObj.sendAll = sendAll.toString();
 
       const result = await fetchPhoenixd(config, '/payinvoice', {
         method: 'POST',
