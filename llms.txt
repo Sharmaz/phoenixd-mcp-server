@@ -1,0 +1,71 @@
+# phoenixd-mcp-server
+
+> MCP server that connects a phoenixd Bitcoin Lightning wallet to LLMs and AI agents. Enables AI assistants to send and receive Lightning payments, manage on-chain Bitcoin, and query node state via the Phoenixd API.
+
+## What it does
+
+This server implements the [Model Context Protocol (MCP)](https://modelcontextprotocol.io) to expose phoenixd Lightning node capabilities as tools that any MCP-compatible LLM or AI agent can call.
+
+Use cases:
+- AI agents that pay for services autonomously via Lightning
+- LLM assistants that can receive payments on behalf of users
+- Automated Bitcoin payment workflows orchestrated by AI
+
+## Installation
+
+```bash
+npx -y phoenixd-mcp-server
+```
+
+Requires a running [phoenixd](https://phoenix.acinq.co/server) node.
+
+## Configuration (Claude Desktop)
+
+```json
+{
+  "mcpServers": {
+    "phoenixd-mcp-server": {
+      "command": "npx",
+      "args": ["-y", "phoenixd-mcp-server"],
+      "env": {
+        "HTTP_PASSWORD": "<phoenixd_http_password>",
+        "HTTP_PROTOCOL": "http",
+        "HTTP_HOST": "127.0.0.1",
+        "HTTP_PORT": "9740"
+      }
+    }
+  }
+}
+```
+
+## Available Tools
+
+### Payment Tools
+
+- `create-invoice` — Create a BOLT11 invoice. Params: `description` (required), `amountSat`, `expirySeconds`, `externalId`, `webhookUrl`.
+- `create-offer` — Create a BOLT12 offer. Params: `description` (required), `amountSat`, `expirySeconds`.
+- `pay-invoice` — Pay a BOLT11 invoice. Params: `invoice` (required), `amountMsat`, `externalId`.
+- `pay-offer` — Pay a BOLT12 offer. Params: `offer` (required), `amountMsat` (required), `externalId`.
+- `pay-lightning-address` — Pay a Lightning Address (e.g. user@domain.com). Params: `address` (required), `amountSat` (required), `comment`.
+- `pay-on-chain` — Send an on-chain Bitcoin payment. Params: `address` (required), `amountSat` (required), `feerateSatByte`.
+- `bump-fee` — Bump fee of an unconfirmed on-chain transaction. Params: `txId` (required), `feerateSatByte` (required).
+- `list-incoming-payments` — List received payments. Params: `from`, `to`, `limit`, `offset`, `all`, `externalId`.
+- `get-incoming-payment` — Get a specific incoming payment by hash. Params: `paymentHash` (required).
+- `list-outgoing-payments` — List sent payments. Params: `from`, `to`, `limit`, `offset`, `externalId`.
+- `get-outgoing-payment` — Get a specific outgoing payment by hash. Params: `paymentHash` (required).
+
+### Node Management Tools
+
+- `get-node-info` — Get Lightning node info (node ID, alias, version).
+- `get-balance` — Get current wallet balance (on-chain and Lightning).
+- `list-channels` — List all Lightning channels and their state.
+- `close-channel` — Close a channel. Params: `channelId` (required), `address` (required), `feerateSatByte` (required).
+- `decode-invoice` — Decode a BOLT11 invoice. Params: `invoice` (required).
+- `decode-offer` — Decode a BOLT12 offer. Params: `offer` (required).
+
+## Links
+
+- [npm package](https://www.npmjs.com/package/phoenixd-mcp-server)
+- [GitHub repository](https://github.com/Sharmaz/phoenixd-mcp-server)
+- [phoenixd documentation](https://phoenix.acinq.co/server)
+- [MCP specification](https://modelcontextprotocol.io)
